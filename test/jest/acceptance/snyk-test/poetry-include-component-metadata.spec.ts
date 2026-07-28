@@ -13,8 +13,7 @@ jest.setTimeout(1000 * 60);
 // so `distribution:url` here is the PEP 503 project page for the package with a
 // `#<filename>` fragment naming the file whose hash is reported — provenance
 // rather than a fetch target. For PyPI-sourced deps (no `[package.source]`) that
-// root is pypi.org; private-index (`legacy`) deps use their recorded root. See
-// snyk-poetry-lockfile-parser/docs/component-metadata.md.
+// root is pypi.org; private-index (`legacy`) deps use their recorded root.
 describe('`snyk test --include-component-metadata` (poetry)', () => {
   interface PrintedGraph {
     target: string;
