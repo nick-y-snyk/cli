@@ -9,11 +9,12 @@ jest.setTimeout(1000 * 60);
 // nodes. Like npm (and unlike maven) there is nothing to resolve first — the
 // hashes live in the lockfile — so this fixture needs no `poetry install`.
 //
-// Note the asymmetry with npm: for PyPI-sourced packages poetry.lock records no
-// download URL, so only `hash:` labels appear here, not `distribution:url`
-// (those are emitted only for `url`/`legacy` sources — see
-// snyk-poetry-lockfile-parser/docs/component-metadata.md). This test therefore
-// asserts hash labels only.
+// Note the difference from npm: poetry.lock records no artifact *download* URL,
+// so `distribution:url` here is the PEP 503 project page for the package with a
+// `#<filename>` fragment naming the file whose hash is reported — provenance
+// rather than a fetch target. For PyPI-sourced deps (no `[package.source]`) that
+// root is pypi.org; private-index (`legacy`) deps use their recorded root. See
+// snyk-poetry-lockfile-parser/docs/component-metadata.md.
 describe('`snyk test --include-component-metadata` (poetry)', () => {
   interface PrintedGraph {
     target: string;
@@ -36,9 +37,14 @@ describe('`snyk test --include-component-metadata` (poetry)', () => {
       .flatMap((node) => Object.keys(node.info?.labels ?? {}))
       .filter((key) => key.startsWith(prefix));
 
+  const labelValues = (graph: any, key: string): string[] =>
+    graph.graph.nodes
+      .map((node) => node.info?.labels?.[key])
+      .filter((value): value is string => Boolean(value));
+
   const fixture = 'poetry-include-component-metadata';
 
-  it('attaches hash labels with the flag', async () => {
+  it('attaches hash and distribution:url labels with the flag', async () => {
     const project = await createProjectFromFixture(fixture);
 
     const { code, stdout } = await runSnykCLI(
@@ -50,6 +56,14 @@ describe('`snyk test --include-component-metadata` (poetry)', () => {
     const graphs = parseDepGraphs(stdout);
     expect(graphs).toHaveLength(1);
     expect(labelKeys(graphs[0].graph, 'hash:').length).toBeGreaterThan(0);
+
+    // The fixture's deps come from PyPI, so each carries a pypi.org project-page
+    // URL whose fragment names the artifact the sibling hash describes.
+    const urls = labelValues(graphs[0].graph, 'distribution:url');
+    expect(urls.length).toBeGreaterThan(0);
+    for (const url of urls) {
+      expect(url).toMatch(/^https:\/\/pypi\.org\/simple\/[^/]+\/#.+$/);
+    }
   });
 
   // Control: without the flag the same project must not produce the labels,
@@ -66,5 +80,6 @@ describe('`snyk test --include-component-metadata` (poetry)', () => {
     const graphs = parseDepGraphs(stdout);
     expect(graphs).toHaveLength(1);
     expect(labelKeys(graphs[0].graph, 'hash:')).toHaveLength(0);
+    expect(labelKeys(graphs[0].graph, 'distribution:url')).toHaveLength(0);
   });
 });
