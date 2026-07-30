@@ -44,6 +44,14 @@ export async function getSinglePluginResult(
       ...(options['include-component-metadata'] !== undefined && {
         includeComponentMetadata: options['include-component-metadata'],
       }),
+      // Forwarded alongside include-component-metadata (see
+      // cli-extension-dep-graph's legacy resolution path). The Gradle plugin
+      // reads it to force --refresh-dependencies so distribution:url can be
+      // resolved; ignored by other plugins. Only added when set to keep the
+      // default plugin-options shape unchanged.
+      ...(options['gradle-refresh-dependencies'] !== undefined && {
+        gradleRefreshDependencies: options['gradle-refresh-dependencies'],
+      }),
     },
     snykHttpClient,
   );

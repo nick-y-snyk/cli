@@ -248,6 +248,70 @@ describe('getSinglePluginResult', () => {
     });
   });
 
+  describe('gradle-refresh-dependencies', () => {
+    it('should forward gradleRefreshDependencies to the plugin when set', async () => {
+      const options: Options & TestOptions = {
+        path: '/test',
+        packageManager: 'gradle',
+        showVulnPaths: 'some',
+        'gradle-refresh-dependencies': true,
+      };
+
+      await getSinglePluginResult('/test', options);
+
+      expect(mockModuleInfo.inspect).toHaveBeenCalledWith(
+        '/test',
+        undefined,
+        expect.objectContaining({
+          gradleRefreshDependencies: true,
+        }),
+        snykHttpClient,
+      );
+    });
+
+    it('should forward gradleRefreshDependencies=false when explicitly disabled', async () => {
+      const options: Options & TestOptions = {
+        path: '/test',
+        packageManager: 'gradle',
+        showVulnPaths: 'some',
+        'gradle-refresh-dependencies': false,
+      };
+
+      await getSinglePluginResult('/test', options);
+
+      expect(mockModuleInfo.inspect).toHaveBeenCalledWith(
+        '/test',
+        undefined,
+        expect.objectContaining({
+          gradleRefreshDependencies: false,
+        }),
+        snykHttpClient,
+      );
+    });
+
+    // The flag is gateway-driven and absent for almost every scan, so an unset
+    // flag must leave the plugin-options shape untouched rather than passing
+    // gradleRefreshDependencies: undefined.
+    it('should omit gradleRefreshDependencies entirely when unset', async () => {
+      const options: Options & TestOptions = {
+        path: '/test',
+        packageManager: 'gradle',
+        showVulnPaths: 'some',
+      };
+
+      await getSinglePluginResult('/test', options);
+
+      expect(mockModuleInfo.inspect).toHaveBeenCalledWith(
+        '/test',
+        undefined,
+        expect.not.objectContaining({
+          gradleRefreshDependencies: expect.anything(),
+        }),
+        snykHttpClient,
+      );
+    });
+  });
+
   describe('MonitorOptions', () => {
     it('should work with MonitorOptions for gomodules', async () => {
       const options: Options & MonitorOptions = {
