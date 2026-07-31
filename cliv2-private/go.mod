@@ -4,8 +4,9 @@ go 1.26.5
 
 require (
 	github.com/snyk/ambient-canary v0.0.0-20260722064253-fba619a134a9
+	github.com/snyk/cli-extension-cos v0.0.0-20260730085209-d326e44b9140
 	github.com/snyk/cli/cliv2 v0.0.0
-	github.com/snyk/remy-cli-extension v1.30.0
+	github.com/snyk/remy-cli-extension v1.34.0
 )
 
 require (
@@ -215,11 +216,11 @@ require (
 	github.com/snyk/cli-extension-os-flows v0.0.0-20260722114313-168a09671091 // indirect
 	github.com/snyk/cli-extension-sbom v0.0.0-20260722102401-3c3af28e7b93 // indirect
 	github.com/snyk/cli-extension-secrets v0.0.0-20260619070019-764c5c87eda3 // indirect
-	github.com/snyk/code-client-go v1.27.5 // indirect
+	github.com/snyk/code-client-go v1.31.0 // indirect
 	github.com/snyk/container-cli v0.0.0-20260213211631-cd2b2cf8f3ea // indirect
 	github.com/snyk/dep-graph/go v0.0.0-20260127160647-c836da762c62 // indirect
 	github.com/snyk/error-catalog-golang-public v0.0.0-20260505112649-a5103d411663 // indirect
-	github.com/snyk/go-application-framework v0.8.0 // indirect
+	github.com/snyk/go-application-framework v0.9.0 // indirect
 	github.com/snyk/go-httpauth v0.0.0-20240307114523-1f5ea3f55c65 // indirect
 	github.com/snyk/policy-engine v1.1.4 // indirect
 	github.com/snyk/snyk-iac-capture v0.6.5 // indirect
@@ -319,5 +320,7 @@ replace github.com/snyk/cli/cliv2 => ../cliv2
 // replace github.com/snyk/cli-extension-sbom => ../../cli-extension-sbom
 
 // replace github.com/snyk/cli-extension-secrets => ../../cli-extension-secrets
+
+// replace github.com/snyk/cli-extension-cos => ../../cli-extension-cos
 
 // replace github.com/snyk/ambient-canary => ../../ambient-canary
